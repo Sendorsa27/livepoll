@@ -8,6 +8,7 @@ import {
   signOutUser
 } from '../actions'
 import { createClient } from '@/utils/supabase/client'
+import { VOTING_URL } from '@/utils/constants'
 import {
   Lock,
   Unlock,
@@ -214,25 +215,22 @@ export default function AdminDashboardContainer({
     }
   }, [supabase])
 
-  // Generate QR Code dynamically pointing to landing domain
+  // Generate QR Code pointing to the Vercel URL constant
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const voteUrl = `${window.location.protocol}//${window.location.host}`
-      QRCode.toDataURL(
-        voteUrl,
-        {
-          width: 400,
-          margin: 2,
-          color: {
-            dark: '#0f172a',
-            light: '#ffffff',
-          },
+    QRCode.toDataURL(
+      VOTING_URL,
+      {
+        width: 400,
+        margin: 2,
+        color: {
+          dark: '#0f172a',
+          light: '#ffffff',
         },
-        (err, url) => {
-          if (!err) setQrCodeUrl(url)
-        }
-      )
-    }
+      },
+      (err, url) => {
+        if (!err) setQrCodeUrl(url)
+      }
+    )
   }, [])
 
   // Derive total votes cast dynamically
@@ -677,7 +675,7 @@ export default function AdminDashboardContainer({
                   Student QR Code
                 </h2>
                 <p className="text-xs text-slate-500 mt-1 leading-normal">
-                  Points to: <span className="text-slate-400 font-semibold">https://vote.sst.scaler.com</span>.
+                  Points to: <span className="text-slate-400 font-semibold">{VOTING_URL}</span>.
                 </p>
               </div>
 

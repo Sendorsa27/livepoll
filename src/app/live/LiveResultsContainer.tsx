@@ -5,6 +5,7 @@ import { createClient } from '@/utils/supabase/client'
 import { RealtimeChannel } from '@supabase/supabase-js'
 import { Maximize2, Minimize2, WifiOff, Vote } from 'lucide-react'
 import QRCode from 'qrcode'
+import { VOTING_URL } from '@/utils/constants'
 
 interface HouseVote {
   house: string
@@ -96,25 +97,20 @@ export default function LiveResultsContainer({
 
   const supabase = createClient()
 
-  // 1. Generate QR Code dynamically pointing to the domain origin
+  // 1. Generate QR Code pointing to the Vercel URL constant
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const host = window.location.host
-      const protocol = window.location.protocol
-      const voteUrl = `${protocol}//${host}`
-      QRCode.toDataURL(voteUrl, {
-        width: 400,
-        margin: 2,
-        color: {
-          dark: '#0f172a', // Slate-900
-          light: '#ffffff'
-        }
-      }).then((url) => {
-        setQrCodeUrl(url)
-      }).catch(err => {
-        console.error('Error generating QR code:', err)
-      })
-    }
+    QRCode.toDataURL(VOTING_URL, {
+      width: 400,
+      margin: 2,
+      color: {
+        dark: '#0f172a', // Slate-900
+        light: '#ffffff'
+      }
+    }).then((url) => {
+      setQrCodeUrl(url)
+    }).catch(err => {
+      console.error('Error generating QR code:', err)
+    })
   }, [])
 
   const connectionStatusRef = useRef(connectionStatus)
@@ -431,7 +427,7 @@ export default function LiveResultsContainer({
               SCAN TO VOTE
             </h2>
             <p className="text-xl md:text-2xl font-bold tracking-tight text-slate-300">
-              vote.sst.scaler.com
+              {VOTING_URL.replace(/^https?:\/\//, '')}
             </p>
           </div>
         </div>
